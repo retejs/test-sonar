@@ -34,5 +34,9 @@ jobs:
           -Dsonar.test.exclusions=tests/**
           -Dsonar.javascript.lcov.reportPaths=coverage/lcov.info
           -Dsonar.tests=tests/
+          -Dsonar.qualitygate.wait=true
           ${{ github.event_name != 'pull_request' && format('-Dsonar.branch.name={0}', github.ref_name) || '' }}
           -Dsonar.verbose=true
+    - name: Run echo
+      run: |
+        echo "Done ${{ github.ref_name }}"
