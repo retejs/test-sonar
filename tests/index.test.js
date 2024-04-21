@@ -5,4 +5,12 @@ describe('a', () => {
         // is function
         expect(a).toBeInstanceOf(Function)
     })
+    it('test', () => {
+        // is function
+        expect(a).toBeInstanceOf(Function)
+    })
+    it('test', () => {
+        // is function
+        expect(a).toBeInstanceOf(Function)
+    })
 })
