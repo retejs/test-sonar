@@ -5,8 +5,12 @@ function b() {
     console.log('a', eval(window.data));
 }
 
+function c() {
+    console.log('a', eval(window.data));
+}
 
 module.exports = {
     a,
-    b
+    b,
+    c
 }
