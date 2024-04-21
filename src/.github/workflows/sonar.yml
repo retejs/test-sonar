@@ -1,0 +1,24 @@
+on:
+  workflow_dispatch:
+
+name: Main Workflow
+jobs:
+  sonarcloud:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+      with:
+        # Disabling shallow clone is recommended for improving relevancy of reporting
+        fetch-depth: 0
+    - name: SonarCloud Scan
+      uses: sonarsource/sonarcloud-github-action@v2.1.1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+      args: >
+        -Dsonar.organization=retejs
+        -Dsonar.projectKey=retejs-${{ github.event.repository.name }}
+        -Dsonar.sources=src/
+        -Dsonar.test.exclusions=tests/**
+        -Dsonar.tests=tests/
+        -Dsonar.verbose=true
