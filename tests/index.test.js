@@ -4,5 +4,6 @@ describe('a', () => {
     it('test', () => {
         // is function
         expect(a).toBeInstanceOf(Function)
+        expect(a()).toBeUndefined()
     })
 })
