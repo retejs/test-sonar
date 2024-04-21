@@ -34,5 +34,5 @@ jobs:
           -Dsonar.test.exclusions=tests/**
           -Dsonar.javascript.lcov.reportPaths=coverage/lcov.info
           -Dsonar.tests=tests/
-          ${{ github.event_name != 'pull_request' && '-Dsonar.branch.name=' + github.ref }}
+          ${{ if github.event_name != 'pull_request' }}-Dsonar.branch.name=${{ github.ref }}{{ endif }}
           -Dsonar.verbose=true
