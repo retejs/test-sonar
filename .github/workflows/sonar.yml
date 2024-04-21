@@ -32,6 +32,7 @@ jobs:
           -Dsonar.projectKey=retejs_${{ github.event.repository.name }}
           -Dsonar.sources=src/
           -Dsonar.test.exclusions=tests/**
+          -Dsonar.javascript.lcov.reportPaths=coverage/lcov.info
           -Dsonar.tests=tests/
           -Dsonar.branch.name=${{ github.ref_name }}
           -Dsonar.verbose=true
