@@ -6,4 +6,9 @@ describe('a', () => {
         expect(a).toBeInstanceOf(Function)
         expect(a()).toBeUndefined()
     })
+    it('test2', () => {
+        // is function
+        expect(a).toBeInstanceOf(Function)
+        expect(a()).toBeUndefined()
+    })
 })
