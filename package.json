@@ -1,0 +1,22 @@
+{
+  "name": "test-sonar",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "jest --coverage --collectCoverageFrom=src/**/*"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/retejs/test-sonar.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/retejs/test-sonar/issues"
+  },
+  "homepage": "https://github.com/retejs/test-sonar#readme",
+  "dependencies": {
+    "jest": "^29.7.0"
+  }
+}
