@@ -29,9 +29,9 @@ jobs:
       with:
         args: >
           -Dsonar.organization=retejs
-          -Dsonar.projectKey='retejs_${{ github.event.repository.name }}'
+          -Dsonar.projectKey=retejs_${{ github.event.repository.name }}
           -Dsonar.sources=src/
           -Dsonar.test.exclusions=tests/**
           -Dsonar.tests=tests/
-          -Dsonar.branch.name='${{ github.ref_name }}
+          -Dsonar.branch.name=${{ github.ref_name }}
           -Dsonar.verbose=true
