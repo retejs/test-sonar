@@ -1,0 +1,102 @@
+name: Update CI workflow secrets
+
+on:
+  workflow_dispatch:
+
+jobs:
+  # get-repositories:
+  #   name: Get repositories list
+  #   runs-on: ubuntu-latest
+  #   outputs:
+  #     list: ${{ steps.repos.outputs.result }}
+  #   steps:
+  #   - uses: actions/github-script@v7
+  #     id: repos
+  #     with:
+  #       script: |
+  #         async function getCustomProperties(owner, repo) {
+  #           const customProperties = await github.request('GET /repos/{owner}/{repo}/properties/values', {
+  #             owner: owner,
+  #             repo: repo,
+  #             headers: {
+  #               'X-GitHub-Api-Version': '2022-11-28'
+  #             }
+  #           })
+  #           return Object.fromEntries(customProperties.data.map(item => [item.property_name, item.value]))
+  #         }
+
+  #         const response = await github.rest.repos.listForOrg({
+  #           org: "retejs",
+  #           per_page: 100
+  #         })
+  #         const repos = await Promise.all(response.data.map(repo => repo.name).map(async repo => {
+  #           return {
+  #             name: repo,
+  #             properties: await getCustomProperties('retejs', repo)
+  #           }
+  #         }))
+
+  #         return repos.filter(repo => repo.properties['npm-package'] === 'true').map(repo => repo.name)
+  #   - name: Found repositories
+  #     run: |
+  #       echo ${{steps.repos.outputs.result}}
+
+  update-repositories:
+    name: Create PR for ${{ matrix.repository }} repository
+    # needs: get-repositories
+    if: success('get-repositories')
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        # repository: ${{fromJson(needs.get-repositories.outputs.list)}}
+        repository: [test-sonar]
+    steps:
+    - name: Enter the repository
+      run: echo ${{ matrix.repository }}
+    - name: Generate token
+      id: generate_token
+      uses: tibdex/github-app-token@v1
+      with:
+        app_id: ${{ secrets.APP_ID }}
+        private_key: ${{ secrets.APP_PRIVATE_KEY }}
+    - name: Checkout repository
+      uses: actions/checkout@v4
+      with:
+        fetch-depth: 0
+        token: ${{ steps.generate_token.outputs.token }}
+        repository: retejs/${{ matrix.repository }}
+    - uses: actions/setup-node@v4
+      with:
+        node-version: 18
+    - name: Update ci.yml
+      run: |
+        cat << EOF > .github/workflows/ci.yml
+        name: CI
+        
+        on:
+          workflow_dispatch:
+          pull_request:
+            branches: [ "main", "beta" ]
+        
+        jobs:
+          ci:
+            uses: retejs/.github/.github/workflows/ci.yml@main
+            secrets: inherit
+        EOF
+    - name: Create Pull Request
+      id: pr
+      if: steps.check.outputs.result == 'true'
+      uses: peter-evans/create-pull-request@v6
+      with:
+        token: ${{ steps.generate_token.outputs.token }}
+        author: rete-js[bot] <rete-js[bot]@users.noreply.github.com>
+        commit-message: "ci: secrets"
+        title: Add secrets to CI workflow
+        branch: ci-secrets
+        body: "Bulk Rete CLI update"
+        reviewers: Ni55aN
+    - name: Add summary
+      if: steps.check.outputs.result == 'true'
+      run: |
+        echo "📰 ${{ steps.pr.outputs.pull-request-url }}" >> $GITHUB_STEP_SUMMARY
