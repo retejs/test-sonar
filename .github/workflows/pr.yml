@@ -44,7 +44,7 @@ jobs:
   update-repositories:
     name: Create PR for ${{ matrix.repository }} repository
     # needs: get-repositories
-    if: success('get-repositories')
+    # if: success('get-repositories')
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
