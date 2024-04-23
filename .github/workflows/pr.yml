@@ -86,7 +86,6 @@ jobs:
         EOF
     - name: Create Pull Request
       id: pr
-      if: steps.check.outputs.result == 'true'
       uses: peter-evans/create-pull-request@v6
       with:
         token: ${{ steps.generate_token.outputs.token }}
@@ -97,6 +96,5 @@ jobs:
         body: "Bulk Rete CLI update"
         reviewers: Ni55aN
     - name: Add summary
-      if: steps.check.outputs.result == 'true'
       run: |
         echo "📰 ${{ steps.pr.outputs.pull-request-url }}" >> $GITHUB_STEP_SUMMARY
