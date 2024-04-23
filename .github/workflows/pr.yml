@@ -4,53 +4,53 @@ on:
   workflow_dispatch:
 
 jobs:
-  # get-repositories:
-  #   name: Get repositories list
-  #   runs-on: ubuntu-latest
-  #   outputs:
-  #     list: ${{ steps.repos.outputs.result }}
-  #   steps:
-  #   - uses: actions/github-script@v7
-  #     id: repos
-  #     with:
-  #       script: |
-  #         async function getCustomProperties(owner, repo) {
-  #           const customProperties = await github.request('GET /repos/{owner}/{repo}/properties/values', {
-  #             owner: owner,
-  #             repo: repo,
-  #             headers: {
-  #               'X-GitHub-Api-Version': '2022-11-28'
-  #             }
-  #           })
-  #           return Object.fromEntries(customProperties.data.map(item => [item.property_name, item.value]))
-  #         }
+  get-repositories:
+    name: Get repositories list
+    runs-on: ubuntu-latest
+    outputs:
+      list: ${{ steps.repos.outputs.result }}
+    steps:
+    - uses: actions/github-script@v7
+      id: repos
+      with:
+        script: |
+          async function getCustomProperties(owner, repo) {
+            const customProperties = await github.request('GET /repos/{owner}/{repo}/properties/values', {
+              owner: owner,
+              repo: repo,
+              headers: {
+                'X-GitHub-Api-Version': '2022-11-28'
+              }
+            })
+            return Object.fromEntries(customProperties.data.map(item => [item.property_name, item.value]))
+          }
 
-  #         const response = await github.rest.repos.listForOrg({
-  #           org: "retejs",
-  #           per_page: 100
-  #         })
-  #         const repos = await Promise.all(response.data.map(repo => repo.name).map(async repo => {
-  #           return {
-  #             name: repo,
-  #             properties: await getCustomProperties('retejs', repo)
-  #           }
-  #         }))
+          const response = await github.rest.repos.listForOrg({
+            org: "retejs",
+            per_page: 100
+          })
+          const repos = await Promise.all(response.data.map(repo => repo.name).map(async repo => {
+            return {
+              name: repo,
+              properties: await getCustomProperties('retejs', repo)
+            }
+          }))
 
-  #         return repos.filter(repo => repo.properties['npm-package'] === 'true').map(repo => repo.name)
-  #   - name: Found repositories
-  #     run: |
-  #       echo ${{steps.repos.outputs.result}}
+          return repos.filter(repo => repo.properties['npm-package'] === 'true').map(repo => repo.name)
+    - name: Found repositories
+      run: |
+        echo ${{steps.repos.outputs.result}}
 
   update-repositories:
     name: Create PR for ${{ matrix.repository }} repository
-    # needs: get-repositories
-    # if: success('get-repositories')
+    needs: get-repositories
+    if: success('get-repositories')
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
       matrix:
-        # repository: ${{fromJson(needs.get-repositories.outputs.list)}}
-        repository: [test-sonar]
+        repository: ${{fromJson(needs.get-repositories.outputs.list)}}
+        # repository: [test-sonar]
     steps:
     - name: Enter the repository
       run: echo ${{ matrix.repository }}
